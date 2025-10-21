@@ -1,47 +1,66 @@
 
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include "ft_btree.h"
 
-void search(int *arr, int *sub, int n, int i, int sub_size, int sum, int target)
+t_btree *make_node(int value)
 {
-	if (sum == target)
-	{
-		int j = 0;
-		while (j < sub_size)
-		{
-			printf("%d ", sub[j]);
-			j++;
-		}
-		printf("\n");
-		return ;
-	}
-	if (sum > target)
-		return ;
-	if (i >= n)
-		return ;
-	sub[sub_size] = arr[i];
-	search(arr, sub, n, i + 1, sub_size + 1, sum + arr[i], target);
-	search(arr, sub, n, i + 1, sub_size, sum, target);
+	t_btree *node;
+	node = malloc(sizeof(t_btree));
+	node->value = value;
+	node->left = 0;
+	node->right = 0;
+	return (node);
 }
 
-int main(int argc, char **argv)
+int check_bal(t_btree *root, int *height)
 {
-	if (argc < 2)
-		return (0);
-	int n = argc - 2;
-	int *arr = malloc(n * sizeof(int));
-	int *sub = malloc(n * sizeof(int));
-	if (arr == NULL || sub == NULL)
-		return (1);
-	int i = 0;
-	while (i < n)
+	int left_height;
+	int right_height;
+	int diff;
+	int left_bal;
+	int right_bal;
+
+	if (root == NULL)
 	{
-		arr[i] = atoi(argv[i + 2]);
-		i++;
+		*height = 0;
+		return (1);
 	}
-	search(arr, sub, n, 0, 0, 0, atoi(argv[1]));
-	free(arr);
-	free(sub);
+	left_bal = check_bal(root->left, &left_height);
+	right_bal = check_bal(root->right, &right_height);
+	if (left_bal == 0 || right_bal == 0)
+		return (0);
+	if (left_height > right_height)
+	{
+		diff = left_height - right_height;
+		*height = 1 + left_height;
+	}
+	else
+	{
+		diff = right_height - left_height;
+		*height = 1 + right_height;
+	}
+	if (diff > 1)
+		return (0);
+	return (1);
+}
+
+int is_bal(t_btree *root)
+{
+	int height = 0;
+	return (check_bal(root, &height));
+}
+
+int main()
+{
+	t_btree *root;
+	root = make_node(1);
+	root->left = make_node(2);
+	root->right = make_node(3);
+	root->right->right = make_node(4);
+	if (is_bal(root))
+		printf("bal\n");
+	else
+		printf("no\n");
 	return (0);
 }

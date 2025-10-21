@@ -14,45 +14,6 @@
 // } t_btree;
 // The tree will not be ordered in any specific way.
 
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include "ft_btree.h"
-
-// t_btree *make_node(int value)
-// {
-// 	t_btree *node;
-// 	node = malloc(sizeof(t_btree));
-// 	node->value = value;
-// 	node->left = 0;
-// 	node->right = 0;
-// 	return (node);
-// }
-
-// int search_binary_tree(t_btree *root, int value)
-// {
-// 	if (root == 0)
-// 		return (0);
-// 	if (root->value == value)
-// 		return (1);
-// 	if (search_binary_tree(root->left, value))
-// 		return (1);
-// 	if (search_binary_tree(root->right, value))
-// 		return (1);
-// 	return (0);
-// }
-
-// int main(void)
-// {
-// 	t_btree *root;
-// 	root = make_node(1);
-// 	root->left = make_node(2);
-// 	root->right = make_node(3);
-// 	root->right->left = make_node(4);
-
-// 	printf("Search 3: %d\n", search_binary_tree(root, 3));
-// 	return (0);
-// }
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "ft_btree.h"
