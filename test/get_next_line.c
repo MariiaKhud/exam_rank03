@@ -139,18 +139,24 @@
 // }
 
 
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
 #include "get_next_line.h"
+#include <unistd.h>
+
 char *ft_strchr(char *s, int c)
 {
 	int i = 0;
-	if (s == NULL)
-		return (NULL);
+	if (s == 0)
+		return (0);
     while (s[i] && s[i] != c)
         i++;
     if (s[i] == c)
-		return (&s[i]);
-	return (NULL);
+    {
+		return &s[i];
+	}
+	return NULL;
 }
 
 size_t ft_strlen(char *s)
@@ -164,12 +170,11 @@ size_t ft_strlen(char *s)
     return (ret);
 }
 
-
 void *ft_memcpy(void *dest, const void *src, size_t n)
 {
 	size_t i = 0;
-	if (src == NULL && dest == NULL)
-		return (NULL);
+	if (dest == 0 && src == 0)
+		return (0);
     while (i < n)
     {
         ((unsigned char*)dest)[i] = ((const unsigned char*)src)[i];
@@ -186,7 +191,7 @@ int str_apped_mem(char **s1, char *s2, size_t size2)
         return (0);
     ft_memcpy(tmp, *s1, size1);
     ft_memcpy(tmp + size1, s2, size2);
-    tmp[size1 + size2] = 0;
+    tmp[size1 + size2] = '\0';
     free(*s1);
     *s1 = tmp;
     return (1);
@@ -200,7 +205,7 @@ int str_apped_str(char **s1, char *s2)
 void *ft_memmove(void *dest, const void *src, size_t n)
 {
 	size_t i = 0;
-	if (dest == src || n == 0)
+	if (dest == src)
         return (dest);
     if (dest < src)
         return (ft_memcpy(dest, src, n));
@@ -218,10 +223,10 @@ char *get_next_line(int fd)
     char *ret;
     char *tmp;
 	int read_ret;
-	
+
 	ret = malloc(1);
-	if (ret == NULL)
-		return (NULL);
+	if (ret == 0)
+		return (0);
 	ret[0] = '\0';
 	tmp = ft_strchr(b, '\n');
     while (!tmp)

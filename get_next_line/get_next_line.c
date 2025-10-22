@@ -46,7 +46,7 @@ int str_apped_mem(char **s1, char *s2, size_t size2)
 		return 0;
 	ft_memcpy(tmp, *s1, size1);
 	ft_memcpy(tmp + size1, s2, size2);
-	tmp[size1 + size2] = 0;
+	tmp[size1 + size2] = '\0';
 	free(*s1);
 	*s1 = tmp;
 	return (1);

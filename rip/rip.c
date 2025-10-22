@@ -132,7 +132,7 @@ int check_parentheses(char *s, int action)
 
 void solve(char *s, int i, int removed, int to_remove)
 {
-    if (!s[i])
+    if (s[i] == '\0')
     {
         if (removed == to_remove && check_parentheses(s, 1))
             puts(s);

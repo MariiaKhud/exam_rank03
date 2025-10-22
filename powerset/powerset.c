@@ -64,7 +64,7 @@ void search(int *arr, int *sub, int n, int i, int sub_size, int sum, int target)
 		printf("\n");
 		return ;
 	}
-	 if (sum > target)
+	if (sum > target)
         return ;
 	if (i >= n)
 		return ;
