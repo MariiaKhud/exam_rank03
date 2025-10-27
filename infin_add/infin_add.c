@@ -28,97 +28,212 @@
 
 #include <unistd.h>
 #include <stdlib.h>
-#include <string.h>
 
-void	ft_putstr(char *str)
+static int	ft_strlen(char *s)
 {
-	while (*str)
-		write(1, str++, 1);
+	int	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
 }
 
-void	reverse(char *str)
+static void	rev_str(char *s)
 {
-	int i = 0;
-	int j = strlen(str) - 1;
-	char tmp;
+	int		i;
+	int		j;
+	char	tmp;
 
+	i = 0;
+	j = ft_strlen(s) - 1;
 	while (i < j)
 	{
-		tmp = str[i];
-		str[i] = str[j];
-		str[j] = tmp;
+		tmp = s[i];
+		s[i] = s[j];
+		s[j] = tmp;
 		i++;
 		j--;
 	}
 }
 
-char	*add_positive(char *a, char *b)
+static int	compare_abs(char *a, char *b)
 {
-	int len_a = strlen(a);
-	int len_b = strlen(b);
-	int max_len;
-	int i = 0;
-	int carry = 0;
+	int	la;
+	int	lb;
+	int	i;
 
-	if (len_a > len_b)
-		max_len = len_a;
-	else
-		max_len = len_b;
+	la = ft_strlen(a);
+	lb = ft_strlen(b);
+	if (la != lb)
+		return (la - lb);
+	i = 0;
+	while (a[i] && b[i])
+	{
+		if (a[i] != b[i])
+			return (a[i] - b[i]);
+		i++;
+	}
+	return (0);
+}
 
-	char *res = malloc(max_len + 2);
+static char	*add_positive(char *a, char *b)
+{
+	int		la;
+	int		lb;
+	int		max_len;
+	int		carry;
+	int		i;
+	char	*res;
+
+	la = ft_strlen(a) - 1;
+	lb = ft_strlen(b) - 1;
+	max_len = la;
+	if (lb > la)
+		max_len = lb;
+	carry = 0;
+	i = 0;
+	res = malloc(max_len + 3);
 	if (!res)
 		return (NULL);
-	res[max_len + 1] = '\0';
-
-	reverse(a);
-	reverse(b);
-
-	while (i < max_len)
+	while (la >= 0 || lb >= 0 || carry)
 	{
-		int digit_a = 0;
-		int digit_b = 0;
+		int da;
+		int db;
+		int sum;
 
-		if (i < len_a)
-			digit_a = a[i] - '0';
-		if (i < len_b)
-			digit_b = b[i] - '0';
-
-		int sum = digit_a + digit_b + carry;
+		da = 0;
+		db = 0;
+		if (la >= 0)
+			da = a[la] - '0';
+		if (lb >= 0)
+			db = b[lb] - '0';
+		sum = da + db + carry;
 		res[i] = (sum % 10) + '0';
 		carry = sum / 10;
 		i++;
-	}
-
-	if (carry)
-	{
-		res[i] = carry + '0';
-		i++;
+		la--;
+		lb--;
 	}
 	res[i] = '\0';
-	reverse(res);
+	rev_str(res);
 	return (res);
 }
 
-int main(int argc, char **argv)
+static char	*sub_positive(char *a, char *b) // assumes |a| >= |b|
 {
-	if (argc != 3)
+	int		la;
+	int		lb;
+	int		borrow;
+	int		i;
+	char	*res;
+
+	la = ft_strlen(a) - 1;
+	lb = ft_strlen(b) - 1;
+	borrow = 0;
+	i = 0;
+	res = malloc(la + 2);
+	if (!res)
+		return (NULL);
+	while (la >= 0)
 	{
+		int da;
+		int db;
+
+		da = a[la] - '0' - borrow;
+		db = 0;
+		if (lb >= 0)
+			db = b[lb] - '0';
+		if (da < db)
+		{
+			da += 10;
+			borrow = 1;
+		}
+		else
+			borrow = 0;
+		res[i] = (da - db) + '0';
+		i++;
+		la--;
+		lb--;
+	}
+	while (i > 1 && res[i - 1] == '0')
+		i--;
+	res[i] = '\0';
+	rev_str(res);
+	return (res);
+}
+
+static char	*prepend_minus(char *s)
+{
+	int		len;
+	char	*res;
+	int		i;
+
+	len = ft_strlen(s);
+	res = malloc(len + 2);
+	if (!res)
+		return (NULL);
+	res[0] = '-';
+	i = 0;
+	while (s[i])
+	{
+		res[i + 1] = s[i];
+		i++;
+	}
+	res[i + 1] = '\0';
+	free(s);
+	return (res);
+}
+
+char	*infin_add(char *a, char *b)
+{
+	int		neg_a;
+	int		neg_b;
+	int		cmp;
+	char	*res;
+
+	neg_a = 0;
+	neg_b = 0;
+	if (a[0] == '-')
+		neg_a = 1;
+	if (b[0] == '-')
+		neg_b = 1;
+	if (neg_a)
+		a++;
+	if (neg_b)
+		b++;
+	if (!neg_a && !neg_b)
+		res = add_positive(a, b);
+	else if (neg_a && neg_b)
+		res = prepend_minus(add_positive(a, b));
+	else
+	{
+		cmp = compare_abs(a, b);
+		if (cmp == 0)
+			return ("0");
+		if (cmp > 0)
+			res = sub_positive(a, b);
+		else
+			res = sub_positive(b, a);
+		if ((neg_a && cmp > 0) || (neg_b && cmp < 0))
+			res = prepend_minus(res);
+	}
+	return (res);
+}
+
+int	main(int ac, char **av)
+{
+	char	*res;
+	int		len;
+
+	if (ac == 3)
+	{
+		res = infin_add(av[1], av[2]);
+		len = ft_strlen(res);
+		write(1, res, len);
 		write(1, "\n", 1);
-		return (0);
+		if (res[0] != '-' && res[0] != '0')
+			free(res);
 	}
-
-	char *a = argv[1];
-	char *b = argv[2];
-
-	if (*a == '-' || *b == '-')
-	{
-		write(1, "Negative numbers not yet handled\n", 33);
-		return (0);
-	}
-
-	char *result = add_positive(a, b);
-	ft_putstr(result);
-	write(1, "\n", 1);
-	free(result);
 	return (0);
 }
