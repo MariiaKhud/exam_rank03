@@ -1,45 +1,65 @@
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "ft_btree.h"
+#define MAX_N 50
 
-t_btree *make_node(int value)
+int is_safe(int *board, int row, int col)
 {
-	t_btree *node;
-	node = malloc(sizeof(t_btree));
-	node->value = value;
-	node->left = 0;
-	node->right = 0;
-	return (node);
-}
-
-int search(t_btree *root, int value)
-{
-	if (root == 0)
-		return (0);
-	if (root->value == value)
-		return (1);
-	if (value != root->value)
+	int i = 0;
+	while (i < col)
 	{
-		if (search(root->left, value))
-			return (1);
-		else if (search(root->right, value))
-			return (1);
-		else
+		if (board[i] == row || board[i] - row == i - col
+			|| board[i] - row == col - i)
 			return (0);
+		i++;
 	}
-	else
-		return (0);
-	
+	return (1);
 }
 
-int main()
+void solve(int *board, int board_size, int col)
 {
-	t_btree *root;
-	root = make_node(1);
-	root->left = make_node(2);
-	root->right = make_node(3);
-	root->left->left = make_node(4);
+	int row = 0;
+	if (col == board_size)
+	{
+		int i = 0;
+		while (i < board_size)
+		{
+			if (i > 0)
+			{
+				fprintf(stdout, " ");
+			}
+			fprintf(stdout, "%d", board[i]);
+			i++;
+		}
+		fprintf(stdout, "\n");
+		return ;
+	}
+	while (row < board_size)
+	{
+		if (is_safe(board, row, col))
+		{
+			board[col] = row;
+			solve(board, board_size, col + 1);
+		}
+		row++;
+	}
+}
 
-	printf("%d\n", search(root, 4));
+int main(int argc, char **argv)
+{
+	int board[MAX_N];
+	int board_size = atoi(argv[1]);
+
+	if (argc != 2)
+	{
+		write(1, "\n", 1);
+		return (0);
+	}
+	if (board_size <= 3 || board_size > MAX_N)
+	{
+		write(1, "\n", 1);
+		return (0);
+	}
+	solve(board, board_size, 0);
 	return (0);
 }

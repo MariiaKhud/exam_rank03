@@ -27,110 +27,69 @@
 // 0 3 6 2 5 1 4$
 // etc...
 
-// NOTE: what is the N-queens problem? 
-// The N-Queens problem is a classic algorithmic puzzle in computer science and discrete mathematics. 
-// It asks: how can you place N chess queens on an N×N chessboard so that no two queens threaten each other? 
-// According to some sources, this means no two queens can share the same row, column, or diagonal. 
-// Here's a breakdown:
-// The Goal:
-// The objective is to find all possible configurations (or a single configuration) of queen placements that satisfy the constraint of no attacks. 
-// The Constraints:
-// Queens attack horizontally, vertically, and diagonally. 
-// Therefore, a valid solution requires that no two queens occupy the same row, column, or diagonal. 
-// Complexity:
-// The N-Queens problem is known to be NP-complete for the decision problem (whether a solution exists), and also for the problem of finding a single solution. 
-// Common Solutions:
-// Backtracking algorithms are frequently used to solve the N-Queens problem efficiently. 
-// The problem can be represented as a set of permutations of the numbers 1 to N, where each number represents the row of a queen in a given column. 
-// For example, for N=4, a solution might be represented as the permutation, which means: 
-// Column 1 has a queen in row 2.
-// Column 2 has a queen in row 4.
-// Column 3 has a queen in row 1.
-// Column 4 has a queen in row 3.
-// The N-Queens problem is a good example of how seemingly simple rules can lead to complex algorithmic challenges. 
-// It's also a problem with applications in areas like scheduling and resource allocation. 
-
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-int *board;
-int board_size;
+#define MAX_N 20
 
-void print_solution(void)
+int check_is_safe(int *board, int row, int col)
 {
 	int i = 0;
 
-	while (i < board_size)
+	while (i < col)
 	{
-		fprintf(stdout, "%d", board[i]);
-
-		if (i < board_size - 1)
-			fprintf(stdout, " ");
-		i++;
-	}
-	fprintf(stdout, "\n");
-}
-
-int ft_abs(int n)
-{
-	if (n < 0)
-		return (-n);
-	return n;
-}
-
-int is_safe(int row, int colum)
-{
-	int i = 0;
-	while (i < colum)
-	{
-		if (board[i] == row)
-			return 0;
-		if (ft_abs(board[i] - row) == ft_abs(i - colum))
+		if (board[i] == row || board[i] - row == i - col
+			|| board[i] - row == col - i)
 			return 0;
 		i++;
 	}
 	return 1;
 }
 
-void solve(int colum)
+void solve(int *board, int board_size, int col)
 {
-	if (colum == board_size)
-	{
-		print_solution();
-		return;
-	}
 	int row = 0;
+
+	if (col == board_size)
+	{
+		int i = 0;
+		while (i < board_size)
+		{
+			if (i > 0)
+				fprintf(stdout, " ");
+			fprintf(stdout, "%d", board[i]);
+			i++;
+		}
+		fprintf(stdout, "\n");
+		return ;
+	}
 	while (row < board_size)
 	{
-		if (is_safe(row, colum))
+		if (check_is_safe(board, row, col))
 		{
-			board[colum] = row;
-			solve(colum + 1);
+			board[col] = row;
+			solve(board, board_size, col + 1);
 		}
 		row++;
 	}
 }
 
-int main(int ac, char **av)
+int main(int argc, char **argv)
 {
-	if (ac != 2)
+	int board[MAX_N];
+	int board_size = atoi(argv[1]);
+	if (argc != 2)
 	{
 		write(1, "\n", 1);
 		return 0;
 	}
-	int n = atoi(av[1]);
-	if (n <= 3)
+	if (board_size <= 3 || board_size > MAX_N)
 	{
 		write(1, "\n", 1);
 		return 0;
 	}
-	board_size = n;
-	board = malloc(sizeof(int) * board_size);
-	if (board == NULL)
-		return (1);
-	solve(0);
-	free(board);
-	return (0);
+	solve(board, board_size, 0);
+	return 0;
 }

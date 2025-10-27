@@ -26,81 +26,6 @@
 // _ ( ) ( _ ) _ $
 // _ ( ) _ ( ) _ $
 
-// #include <unistd.h>
-// #include <stdio.h>
-
-// int min_remove(char *s)
-// {
-// 	int i = 0;
-// 	int open = 0, close = 0;
-// 	while (s[i])
-// 	{
-// 		if (s[i] == '(')
-// 			open++;
-// 		else if (s[i] == ')')
-// 		{
-// 			if (open > 0)
-// 				open--;
-// 			else
-// 				close++;
-// 		}
-// 		i++;
-// 	}
-// 	return open + close;
-// }
-
-// int is_valid(char *s)
-// {
-// 	int i = 0;
-// 	int balance = 0;
-// 	while (s[i])
-// 	{
-// 		if (s[i] == '(')
-// 			balance++;
-// 		else if (s[i] == ')')
-// 		{
-// 			if (balance == 0)
-// 				return 0;
-// 			balance--;
-// 		}
-// 		i++;
-// 	}
-// 	return balance == 0;
-// }
-
-// void solve(char *s, int i, int removed, int to_remove)
-// {
-// 	if (!s[i])
-// 	{
-// 		if (removed == to_remove && is_valid(s))
-// 			puts(s);
-// 		return;
-// 	}
-// 	if (s[i] == '(' || s[i] == ')')
-// 	{
-// 		char saved = s[i];
-// 		s[i] = ' ';
-// 		solve(s, i + 1, removed + 1, to_remove);
-// 		s[i] = saved;
-// 	}
-// 	solve(s, i + 1, removed, to_remove);
-// }
-
-// int main(int ac, char **av)
-// {
-// 	if (ac != 2)
-// 	{
-// 		write(1, "\n", 1);
-// 		return 0;
-// 	}
-// 	int to_remove = min_remove(av[1]);
-// 	if (!to_remove && is_valid(av[1]))
-// 		puts(av[1]);
-// 	else
-// 		solve(av[1], 0, 0, to_remove);
-// }
-
-
 
 #include <unistd.h>
 #include <stdio.h>
@@ -124,7 +49,7 @@ int check_parentheses(char *s, int action)
         }
         i++;
     }
-    if (action == 0)
+    if (action == 0)/* code */
         return open + close;
     else
         return (open + close == 0);
