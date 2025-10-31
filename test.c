@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #define MAX_N 50
 
 int is_safe(int *board, int row, int col)
@@ -25,9 +26,7 @@ void solve(int *board, int board_size, int col)
 		while (i < board_size)
 		{
 			if (i > 0)
-			{
 				fprintf(stdout, " ");
-			}
 			fprintf(stdout, "%d", board[i]);
 			i++;
 		}
@@ -49,7 +48,6 @@ int main(int argc, char **argv)
 {
 	int board[MAX_N];
 	int board_size = atoi(argv[1]);
-
 	if (argc != 2)
 	{
 		write(1, "\n", 1);
